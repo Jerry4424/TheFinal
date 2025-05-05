@@ -25,9 +25,20 @@ function OrderMaterialsPage() {
     }
 
     const quantityToAdd = item.name === 'Labor' ? 1 : quantities[item.name] || 1;
-    if (item.maxQuantity !== 0 && quantityToAdd > item.maxQuantity && item.name !== 'Labor') {
-      alert(`You cannot order more than ${item.maxQuantity} of ${item.name}`);
-      return;
+
+    const existingItem = user.selectedItems?.find((cartItem) => cartItem.name === item.name);
+
+    if (existingItem) {
+      if (item.maxQuantity === 1) {
+        alert(`${item.name} is a one time purchase it can only be added to the cart once.`);
+        return;
+      }
+
+      const updatedQuantity = existingItem.quantity + quantityToAdd;
+      if (item.maxQuantity !== 0 && updatedQuantity > item.maxQuantity) {
+        alert(`You cannot order more than ${item.maxQuantity} of ${item.name}`);
+        return;
+      }
     }
 
     setUser((prevUser) => {
